@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="result-container">
+
+    <!-- ===== FITNESS SUMMARY ===== -->
+    <div class="summary-section">
+
+        <div class="summary-card">
+            <h4>BMI</h4>
+            <div class="summary-value">{{ bmi }}</div>
+            <div class="badge 
+                {% if bmi_result == 'Normal' %}badge-green
+                {% elif bmi_result == 'Underweight' %}badge-blue
+                {% elif bmi_result == 'Overweight' %}badge-orange
+                {% else %}badge-red{% endif %}">
+                {{ bmi_result }}
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h4>Maintenance Calories</h4>
+            <div class="summary-value">{{ calories }} kcal</div>
+        </div>
+
+        <div class="summary-card">
+            <h4>Target Calories</h4>
+            <div class="summary-value">{{ target_calories }} kcal</div>
+        </div>
+
+        <div class="summary-card">
+            <h4>Water Intake</h4>
+            <div class="summary-value">{{ water }} L/day</div>
+        </div>
+
+    </div>
+
+
+    <!-- ===== WEEKLY BUTTON ===== -->
+<div style="text-align:center; margin:20px 0;">
+
+    {% if not weekly %}
+        <a href="/generate-weekly" class="premium-btn">
+            Generate 7-Day Plan
+        </a>
+    {% endif %}
+
+    <a href="/download-pdf" class="premium-btn" style="margin-left:10px;">
+        📄 Download PDF
+    </a>
+
+</div>
+    <!-- ===== DOWNLOAD PDF BUTTON ===== -->
+
+    {% if not weekly %}
+
+        <h2 class="meal-title">🍽 Your AI Meal Plan (Day 1)</h2>
+
+        <div class="meal-grid">
+
+            {% for meal_type, meal_text in plan.items() %}
+                {% if meal_type != "Tips" %}
+                <div class="meal-card">
+                    <h3>{{ meal_type }}</h3>
+
+                    <div class="meal-text" id="{{ meal_type }}">
+                        {{ meal_text | replace('\n','<br>') | safe }}
+                    </div>
+
+                    <button class="replace-btn" 
+                            onclick="replaceMeal('{{ meal_type }}')">
+                        🔄 Replace
+                    </button>
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="meal-card full-width">
+                <h3>💡 Health Tips</h3>
+                <div class="meal-text">
+                    {{ plan["Tips"] | replace('\n','<br>') | safe }}
+                </div>
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <h2 class="meal-title">📅 Your 7-Day AI Meal Plan</h2>
+
+        {% for day, meals in plan.items() %}
+            <div class="weekly-day">
+                <h3>{{ day }}</h3>
+
+                <div class="meal-grid">
+                    {% for meal_type, meal_text in meals.items() %}
+                        <div class="meal-card">
+                            <h4>{{ meal_type }}</h4>
+                            <div class="meal-text">
+                                {{ meal_text | replace('\n','<br>') | safe }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+    {% endif %}
+
+</div>
+
+
+<!-- ===== REPLACE MEAL SCRIPT ===== -->
+<script>
+function replaceMeal(mealType) {
+
+    fetch("/replace-meal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ meal_type: mealType })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const container = document.getElementById(mealType);
+
+        // Split into options
+        const options = data.options.split("Option").slice(1);
+
+        container.innerHTML = "";
+
+        options.forEach((opt, index) => {
+
+            const box = document.createElement("div");
+            box.style.border = "1px solid #4fc3f7";
+            box.style.borderRadius = "8px";
+            box.style.padding = "8px";
+            box.style.marginBottom = "10px";
+            box.style.cursor = "pointer";
+
+            box.innerHTML =
+                "<strong>Healthy Option " + (index + 1) + "</strong><br>" +
+                opt.replace(/\n/g, "<br>");
+
+            box.onclick = function() {
+                container.innerHTML = opt.replace(/\n/g, "<br>");
+            };
+
+            container.appendChild(box);
+        });
+
+    });
+}
+</script>
+
+{% endblock %}

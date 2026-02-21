@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-wrapper">
+
+<div class="floating-food">
+    <img src="https://cdn-icons-png.flaticon.com/512/590/590685.png" class="food f1">  <!-- Banana -->
+    <img src="https://cdn-icons-png.flaticon.com/512/590/590672.png" class="food f2">  <!-- Broccoli -->
+    <img src="https://cdn-icons-png.flaticon.com/512/590/590681.png" class="food f3">  <!-- Carrot -->
+    <img src="https://cdn-icons-png.flaticon.com/512/415/415733.png" class="food f4">  <!-- Apple -->
+    <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" class="food f5"> <!-- Avocado -->
+    <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" class="food f6"> <!-- Salad Bowl -->
+</div>
+
+<div class="auth-box">    
+    <h2>Create Account</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+</div>
+</div>
+{% endblock %}

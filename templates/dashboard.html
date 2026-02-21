@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-header">
+        <h1>Nutrition Recommendation</h1>
+        <p>Your personalized AI-powered nutrition assistant</p>
+    </div>
+
+    {% if current_user.age %}
+
+        <!-- ===== SAVED PROFILE VIEW ===== -->
+
+        <div class="profile-summary">
+
+            <div class="profile-card">
+                <h4>Age</h4>
+                <p>{{ current_user.age }}</p>
+            </div>
+
+            <div class="profile-card">
+                <h4>Height</h4>
+                <p>{{ current_user.height }} cm</p>
+            </div>
+
+            <div class="profile-card">
+                <h4>Weight</h4>
+                <p>{{ current_user.weight }} kg</p>
+            </div>
+
+            <div class="profile-card">
+                <h4>Goal</h4>
+                <p>{{ current_user.goal }}</p>
+            </div>
+
+        </div>
+
+        <div class="action-buttons">
+
+            <form method="POST" action="{{ url_for('meal.generate') }}">
+                <button class="primary-btn" type="submit">
+                    Generate Meal Plan
+                </button>
+            </form>
+
+            <form method="GET" action="{{ url_for('meal.reset_profile') }}">
+                <button class="secondary-btn" type="submit">
+                    Create New Plan
+                </button>
+            </form>
+
+        </div>
+
+    {% else %}
+
+        <!-- ===== PROFILE FORM ===== -->
+
+        <div class="dashboard-card">
+
+            <form method="POST" action="{{ url_for('meal.generate') }}">
+
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" name="age" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Height (cm)</label>
+                    <input type="number" name="height" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" name="weight" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Goal</label>
+                    <select name="goal" required>
+                        <option value="">Select Goal</option>
+                        <option>Lose</option>
+                        <option>Gain</option>
+                        <option>Maintain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Diet Type</label>
+                    <select name="diet" required>
+                        <option value="">Select Diet</option>
+                        <option>Vegetarian</option>
+                        <option>Non-Vegetarian</option>
+                        <option>Vegan</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Activity Level</label>
+                    <select name="activity" required>
+                        <option value="">Select Activity</option>
+                        <option>Sedentary</option>
+                        <option>Light</option>
+                        <option>Moderate</option>
+                        <option>Active</option>
+                        <option>Very Active</option>
+                    </select>
+                </div>
+
+                <button class="primary-btn" type="submit">
+                    Save & Generate Meal Plan
+                </button>
+
+            </form>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
